@@ -1,26 +1,23 @@
 const mongoose = require('mongoose');
 
-getUserDetails = username => {
-  return {
-    user: 'Ryan',
-    pw: 'password'
-  };
-};
+const { UserModel, UserProfile } = require('./user-model');
 
 const dbInterface = client => {
-  loginCheck = (user, pw) => {
-    if (user && pw) {
-      const userDetails = getUserDetails(user);
-      if (userDetails && userDetails.user === user && userDetails.pw === pw) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+  //retrieve user details from the db
+  getUserDetails = username => {
+    return new Promise((resolve, reject) => {
+      UserModel.find({ username: username }, (err, user) => {
+        if (err || !user || user.length === 0) {
+          reject(Error('No user found'));
+        } else {
+          resolve(user);
+        }
+      });
+    });
   };
 
   return {
-    loginCheck: loginCheck
+    getUserDetails: getUserDetails
   };
 };
 

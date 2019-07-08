@@ -19,7 +19,7 @@ services:
     links:
       - db
     environment:
-      DATABASE_URL: mongodb://db
+      DATABASE_URL: mongodb://db/users
       HOST: '0.0.0.0'
       PORT: '8080'
       SECRET: 'myauthsecret'

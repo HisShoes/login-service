@@ -3,6 +3,7 @@ console.log('started node');
 const { connect } = require('./db');
 const server = require('./server');
 const tokenAuth = require('./jwt-auth-middleware')(process.env.SECRET);
+const UserController = require('./user-controller');
 
 //connect to db
 connect(process.env.DATABASE_URL)
@@ -12,8 +13,7 @@ connect(process.env.DATABASE_URL)
       port: process.env.PORT,
       host: process.env.HOST,
       tokenMiddleware: tokenAuth.middleware,
-      generateToken: tokenAuth.generateToken,
-      db: res
+      userController: new UserController(res, tokenAuth.generateToken)
     });
   })
   .catch(err => {
