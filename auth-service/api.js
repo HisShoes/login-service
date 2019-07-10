@@ -6,13 +6,34 @@ module.exports = (app, config) => {
     res.json({ success: true, message: 'token valid' });
   });
 
+  app.post('/signup', (req, res) => {
+    userController
+      .createUser(
+        req.body.email,
+        req.body.username,
+        req.body.firstName,
+        req.body.lastName,
+        req.body.password
+      )
+      .then(loginDetails => {
+        console.log(loginDetails);
+        res.json({
+          success: true,
+          userProfile: loginDetails.userProfile,
+          token: loginDetails.loginToken
+        });
+      })
+      .catch(err => {
+        res.status(403).json({ success: false, err: err });
+      });
+  });
+
   //used to login
   app.post('/login', (req, res) => {
     userController
       .loginCheck(req.body.username, req.body.password)
       .then(token => {
         if (token) {
-          console.log('response');
           res.json({
             success: true,
             message: `Authentication successful`,
@@ -23,7 +44,6 @@ module.exports = (app, config) => {
         }
       })
       .catch(err => {
-        console.log('err 2');
         res.status(403).json({
           success: false,
           message: `Authentication failed`

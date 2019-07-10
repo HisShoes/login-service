@@ -16,8 +16,48 @@ const dbInterface = client => {
     });
   };
 
+  createUser = (email, username, firstName, lastName, passHash, passSalt) => {
+    return new Promise((resolve, reject) => {
+      if (
+        !email ||
+        !username ||
+        !firstName ||
+        !lastName ||
+        !passHash ||
+        !passSalt
+      ) {
+        reject(Error('Missing fields'));
+      } else {
+        const newUser = UserModel({
+          email: email,
+          username: username,
+          firstName: firstName,
+          lastName: lastName,
+          passwordHash: passHash,
+          passwordSalt: passSalt
+        });
+
+        UserModel.find({ username: username }, (err, user) => {
+          if (err || !user || user.length === 0) {
+            newUser.save(err => {
+              const newUserProfile = new UserProfile(newUser);
+              if (err) {
+                reject(err);
+              } else {
+                resolve(newUserProfile);
+              }
+            });
+          } else {
+            reject(null);
+          }
+        });
+      }
+    });
+  };
+
   return {
-    getUserDetails: getUserDetails
+    getUserDetails: getUserDetails,
+    createUser: createUser
   };
 };
 

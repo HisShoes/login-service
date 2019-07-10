@@ -1,5 +1,3 @@
-console.log('started node');
-
 const { connect } = require('./db');
 const server = require('./server');
 const tokenAuth = require('./jwt-auth-middleware')(process.env.SECRET);
